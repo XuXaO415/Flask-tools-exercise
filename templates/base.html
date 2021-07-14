@@ -9,6 +9,10 @@
 </head>
 
 <body>
+    <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/start">Start</a>
+    </nav>
     {% for msg in get_flashed_messages() %}
     <p>{{ msg }}</p>
     {% endfor %} {% block content %} {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, flash, redirect
 #from random import randint,  choice, sample
 from flask_debugtoolbar import DebugToolbarExtension
-from surveys import satisfaction_survey as survey
+from surveys import satisfaction_survey as survey, surveys
 
 
 #memorize[stored_responses] = []
@@ -16,31 +16,51 @@ debug = DebugToolbarExtension(app)
 
 
 
+# @app.route('/')
+# def show_survey_title():
+#     return render_template('start.html')
+
+
+
 @app.route('/')
-def show_survey_title():
-    return render_template('start.html')
+def show_survey():
+    return render_template('base.html')
     
     
 @app.route('/start')
 def start_survey():
     """Shows """
-    return render_template('start.html', survey=survey)
- 
-    # return redirect('/questions/0')
-    # instructions = survey.instructions    
-    # title =survey.questions
-    # if(len(responses) == len(survey.questions)):
-    #     redirect('/questions/0')
-    # else:
-    #     return render_template('start.html', instructions=instructions, title=title)
+    if len(responses) == len(survey.questions):
+        return redirect('/questions/0')
+    title = survey.title
+    instructions = survey.instructions
+    return render_template('start.html', title=title, instruction=instructions)
+
+@app.route('/answer', methods=['POST'])
+def handle_answer():
+    choice = request.form['answer']
+    responses = stored_responses
+    responses.append(choice)
+    stored_responses = responses
+    if (len(responses) == len(survey.questions)):
+        return redirect('/thanks')
+        return redirect(f"/questions/{len(responses)}")
+
+@app.route('/questions/<int:qid>')
+def show_questions(qid):
+    # if len(responses) == len(survey.questions):
+    #     redirect('/thanks')
+    # if qid == 0 and len(responses) == 0:
+    #     # print('if',responses, qid, len(responses))
+    #     question = survey.questions[qid]
+    #     prompt = question.question
+    #     choices = question.choices
+        return render_template('questions.html')
 
 
 
-# @app.route('/question/<int:qid>')
-# def question_handle(qid):
-#         return render_template('answer.html')
 
-# @app.route('/thanks')
-# def thank_user():
-#     return render_template('thanks.html')
+@app.route('/thanks')
+def thank_user():
+    return render_template('thanks.html')
         
