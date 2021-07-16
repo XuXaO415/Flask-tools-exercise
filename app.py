@@ -1,3 +1,4 @@
+#import objects like request
 from flask import Flask, request, render_template, flash, redirect, session
 #from random import randint,  choice, sample
 from flask_debugtoolbar import DebugToolbarExtension
@@ -26,10 +27,10 @@ def start_survey():
     # session[stored_responses] = []
     # title = survey.title
     # instructions = survey.instructions
-    return redirect('/questions/0')
-    # return render_template('questions.html')
+    # return redirect('/questions/0')
+    return render_template('questions.html')
 
-@app.route('/questions/<int:qid>')
+@app.route('/questions/<qid>')
 def show_questions(qid):
     responses = session.get(stored_responses)
     if(responses is None):
@@ -40,12 +41,12 @@ def show_questions(qid):
         return redirect('/thanks')
         """Redirects user if they try to manually change url"""
     if(len(responses) != qid):
-        flash(f'Invalid question id: {qid}. You cannot do that!')
+        #flash(f'Invalid question id: {qid}. You cannot do that!')
         return redirect(f"/questions/{len(responses)}")
     
-    question = survey.questions[qid]
+    questions = survey.questions[qid]
     return render_template(
-        "questions.html", question_num=qid, questions=questions)
+        "questions.html", questions=questions)
 
 @app.route('/answer', methods=['POST'])
 def handle_answer():
@@ -63,3 +64,7 @@ def handle_answer():
 @app.route('/thanks')
 def thank_user():
     return render_template('thanks.html')
+
+
+#request.args = compiled from query strings
+#request.forms = is the post-request from form data
